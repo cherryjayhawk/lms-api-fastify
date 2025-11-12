@@ -7,4 +7,5 @@ export const env = {
   JWT_SECRET: process.env.JWT_SECRET ?? '',
   MONGODB_URI: process.env.MONGODB_URI ?? '',
   PORT: Number(process.env.PORT) || 3000,
+  HOST: process.env.HOST || "0.0.0.0"
 };

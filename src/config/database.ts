@@ -1,4 +1,5 @@
 import { MongoClient, Db } from 'mongodb';
+import { env } from './env';
 
 let db: Db;
 let client: MongoClient;
@@ -8,7 +9,7 @@ export async function connectDB(): Promise<Db> {
     return db;
   }
 
-  const uri = process.env.MONGODB_URI || 'mongodb://localhost:27017/library';
+  const uri = env.MONGODB_URI;
   
   client = new MongoClient(uri);
   await client.connect();

@@ -1,22 +1,23 @@
 import Fastify from "fastify";
-import { connectDB } from "./config/database";
+import { buildApp } from "./app";
+import { env } from "./config/env";
 
 const start = async () => {
-  await connectDB();
-
   const fastify = Fastify({
     logger: {
       level: process.env.LOG_LEVEL || "info",
     },
   });
 
+  await buildApp(fastify);
+  
   fastify.get("/", async function handler(request, reply) {
     return { hello: "world" };
   });
 
   try {
-    const port = parseInt(process.env.PORT || "3000", 10);
-    const host = process.env.HOST || "0.0.0.0";
+    const port = env.PORT;
+    const host = env.HOST;
 
     await fastify.listen({ port, host });
   } catch (err) {

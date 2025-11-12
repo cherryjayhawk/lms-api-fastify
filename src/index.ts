@@ -1,6 +1,9 @@
 import Fastify from "fastify";
+import { connectDB } from "./config/database";
 
 const start = async () => {
+  await connectDB();
+
   const fastify = Fastify({
     logger: {
       level: process.env.LOG_LEVEL || "info",

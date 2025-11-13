@@ -31,4 +31,16 @@ const refreshTokenSchema = {
   },
 };
 
-export { registerSchema, loginSchema, refreshTokenSchema };
+const createAdminSchema = {
+  body: {
+    type: 'object',
+    required: ['email', 'password', 'name'],
+    properties: {
+      email: { type: 'string', format: 'email' },
+      password: { type: 'string', minLength: 8 },
+      name: { type: 'string', minLength: 3 },
+    },
+  },
+};
+
+export { registerSchema, loginSchema, refreshTokenSchema, createAdminSchema };

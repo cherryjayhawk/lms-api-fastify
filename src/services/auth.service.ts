@@ -57,6 +57,35 @@ export class AuthService {
     };
   }
 
+  async createAdmin(data: RegisterDTO) {
+    const db = getDB();
+    const usersCollection = db.collection('users');
+
+    const existingUser = await usersCollection.findOne({ email: data.email });
+    if (existingUser) {
+      throw new Error('Email already registered');
+    }
+
+    const hashedPassword = await bcrypt.hash(data.password, 10);
+
+    const user = {
+      email: data.email,
+      password: hashedPassword,
+      name: data.name,
+      role: 'admin',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
+    const result = await usersCollection.insertOne(user);
+
+    return {
+      message: 'Admin user created successfully',
+      userId: result.insertedId,
+      role: 'admin',
+    };
+  }
+
   async login(data: LoginDTO, jwtSign: any) {
     const db = getDB();
     const usersCollection = db.collection('users');
@@ -250,7 +279,7 @@ export class AuthService {
 
     const user = await usersCollection.findOne(
       { _id: new ObjectId(userId) },
-      { projection: { password: 0, refreshToken: 0, tokenFamilyId: 0 } }
+      { projection: { password: 0, refreshToken: 0 } }
     );
 
     if (!user) {

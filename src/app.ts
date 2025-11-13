@@ -4,6 +4,7 @@ import multipart from '@fastify/multipart';
 import jwt from '@fastify/jwt';
 import { connectDB } from './config/database.js';
 import { env } from './config/env.js';
+import { authRoutes } from './routes/auth.routes.js';
 
 export async function buildApp(fastify: FastifyInstance) {
 
@@ -42,6 +43,9 @@ export async function buildApp(fastify: FastifyInstance) {
       reply.status(401).send({ error: 'Unauthorized' });
     }
   });
+
+  // Register auth routes
+  await fastify.register(authRoutes);
 
   return fastify;
 }

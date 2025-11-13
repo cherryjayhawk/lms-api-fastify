@@ -21,4 +21,14 @@ const loginSchema = {
   },
 };
 
-export { registerSchema, loginSchema };
+const refreshTokenSchema = {
+  body: {
+    type: 'object',
+    required: ['refreshToken'],
+    properties: {
+      refreshToken: { type: 'string' },
+    },
+  },
+};
+
+export { registerSchema, loginSchema, refreshTokenSchema };

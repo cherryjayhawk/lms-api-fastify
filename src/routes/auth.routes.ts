@@ -10,17 +10,17 @@ const authController = new AuthController();
 
 export async function authRoutes(fastify: FastifyInstance) {
   // Public routes
-  fastify.post("/auth/register", { schema: registerSchema }, (request, reply) =>
+  fastify.post("/register", { schema: registerSchema }, (request, reply) =>
     authController.register(request, reply)
   );
 
-  fastify.post("/auth/login", { schema: loginSchema }, (request, reply) =>
+  fastify.post("/login", { schema: loginSchema }, (request, reply) =>
     authController.login(request, reply)
   );
 
   // Protected routes
   fastify.post(
-    "/auth/refresh",
+    "/refresh",
     {
       schema: refreshTokenSchema,
       preHandler: async (request, reply) => {
@@ -35,7 +35,7 @@ export async function authRoutes(fastify: FastifyInstance) {
   );
 
   fastify.post(
-    "/auth/logout",
+    "/logout",
     {
       preHandler: async (request, reply) => {
         try {
@@ -49,7 +49,7 @@ export async function authRoutes(fastify: FastifyInstance) {
   );
 
   fastify.get(
-    "/auth/me",
+    "/me",
     {
       preHandler: async (request, reply) => {
         try {

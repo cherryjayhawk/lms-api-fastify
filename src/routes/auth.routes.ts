@@ -4,7 +4,9 @@ import {
   registerSchema,
   loginSchema,
   refreshTokenSchema,
+  createAdminSchema,
 } from "../schemas/auth.schema";
+import { env } from "../config/env";
 
 const authController = new AuthController();
 
@@ -60,5 +62,20 @@ export async function authRoutes(fastify: FastifyInstance) {
       },
     },
     (request, reply) => authController.getCurrentUser(request, reply)
+  );
+
+  // Admin creation (protected with secret key)
+  fastify.post(
+    "/create-admin",
+    {
+      schema: createAdminSchema,
+      preHandler: async (request, reply) => {
+        const adminSecret = request.headers["x-admin-secret"];
+        if (!adminSecret || adminSecret !== env.ADMIN_SECRET_KEY) {
+          reply.status(401).send({ error: "Invalid or missing admin secret" });
+        }
+      },
+    },
+    (request, reply) => authController.createAdmin(request, reply)
   );
 }

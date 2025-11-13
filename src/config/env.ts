@@ -12,6 +12,8 @@ export const env = {
   REFRESH_TOKEN_ROTATION_ENABLED: process.env.REFRESH_TOKEN_ROTATION_ENABLED !== 'false',
   // Token family is used to detect token reuse attacks
   MAX_TOKEN_FAMILY_AGE: Number(process.env.MAX_TOKEN_FAMILY_AGE) || 30 * 24 * 60 * 60 * 1000, // 30 days in ms
+  // Admin creation secret key (one-time use for initial setup)
+  ADMIN_SECRET_KEY: process.env.ADMIN_SECRET_KEY ?? '',
   MONGODB_URI: process.env.MONGODB_URI ?? '',
   PORT: Number(process.env.PORT) || 3000,
   HOST: process.env.HOST || "0.0.0.0"

@@ -5,6 +5,7 @@ import jwt from '@fastify/jwt';
 import { connectDB } from './config/database.js';
 import { env } from './config/env.js';
 import { authRoutes } from './routes/auth.routes.js';
+import bookRoutes from './routes/books.route.js';
 
 export async function buildApp(fastify: FastifyInstance) {
 
@@ -44,8 +45,8 @@ export async function buildApp(fastify: FastifyInstance) {
     }
   });
 
-  // Register auth routes
-  await fastify.register(authRoutes);
+  await fastify.register(authRoutes, { prefix: '/api/auth' });
+  await fastify.register(bookRoutes, { prefix: '/api/books' });
 
   return fastify;
 }

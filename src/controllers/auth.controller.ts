@@ -28,6 +28,16 @@ export class AuthController {
     }
   }
 
+  async createAdmin(request: FastifyRequest, reply: FastifyReply) {
+    try {
+      const body = request.body as any;
+      const result = await this.authService.createAdmin(body);
+      return reply.status(201).send(result);
+    } catch (error: any) {
+      return reply.status(400).send({ error: error.message });
+    }
+  }
+
   async refreshToken(request: FastifyRequest, reply: FastifyReply) {
     try {
       const user = (request as any).user;

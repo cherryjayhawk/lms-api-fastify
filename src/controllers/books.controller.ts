@@ -1,9 +1,9 @@
-import { FastifyRequest, FastifyReply } from 'fastify';
-import { BookService } from '../services/books.service';
-import * as fs from 'node:fs/promises';
-import { createWriteStream} from 'fs';
-import path from 'path';
-import { pipeline } from 'stream/promises';
+import { FastifyRequest, FastifyReply } from "fastify";
+import { BookService } from "../services/books.service";
+import * as fs from "node:fs/promises";
+import { createWriteStream } from "fs";
+import path from "path";
+import { pipeline } from "stream/promises";
 
 export class BookController {
   private bookService: BookService;
@@ -34,8 +34,52 @@ export class BookController {
 
   async create(request: FastifyRequest, reply: FastifyReply) {
     try {
-      const data = request.body as any;
-      const book = await this.bookService.create(data);
+      const data = await request.file();
+
+      if (!data) {
+        return reply.status(400).send({ error: "No form data provided" });
+      }
+
+      const fields: any = {};
+      for await (const part of request.parts()) {
+        if (part.type === "field") {
+          fields[part.fieldname] = part.value;
+        }
+      }
+
+      // Parse JSON fields and handle file
+      let coverImageUrl: string | null = null;
+
+      for await (const part of request.parts()) {
+        if (part.type === "file" && part.fieldname === "coverImage") {
+          const uploadDir = path.join(process.cwd(), "uploads", "covers");
+          await fs.mkdir(uploadDir, { recursive: true });
+
+          const filename = `${Date.now()}-${part.filename}`;
+          const filepath = path.join(uploadDir, filename);
+          await pipeline(part.file, createWriteStream(filepath));
+
+          coverImageUrl = `/uploads/covers/${filename}`;
+        }
+      }
+
+      const bookData = {
+        title: fields.title,
+        author: fields.author,
+        isbn: fields.isbn,
+        publisher: fields.publisher,
+        publishedYear: fields.publishedYear
+          ? parseInt(fields.publishedYear)
+          : undefined,
+        category: fields.category,
+        description: fields.description,
+        totalStock: parseInt(fields.totalStock),
+        availableStock:
+          parseInt(fields.availableStock) || parseInt(fields.totalStock),
+        ...(coverImageUrl && { coverImage: coverImageUrl }),
+      };
+
+      const book = await this.bookService.create(bookData);
       return reply.status(201).send(book);
     } catch (error: any) {
       return reply.status(400).send({ error: error.message });
@@ -45,8 +89,41 @@ export class BookController {
   async update(request: FastifyRequest, reply: FastifyReply) {
     try {
       const { id } = request.params as any;
-      const data = request.body as any;
-      const book = await this.bookService.update(id, data);
+
+      const fields: any = {};
+      let coverImageUrl: string | null = null;
+
+      for await (const part of request.parts()) {
+        if (part.type === "field") {
+          fields[part.fieldname] = part.value;
+        } else if (part.type === "file" && part.fieldname === "coverImage") {
+          const uploadDir = path.join(process.cwd(), "uploads", "covers");
+          await fs.mkdir(uploadDir, { recursive: true });
+
+          const filename = `${Date.now()}-${part.filename}`;
+          const filepath = path.join(uploadDir, filename);
+          await pipeline(part.file, createWriteStream(filepath));
+
+          coverImageUrl = `/uploads/covers/${filename}`;
+        }
+      }
+
+      const updateData: any = {};
+      if (fields.title) updateData.title = fields.title;
+      if (fields.author) updateData.author = fields.author;
+      if (fields.isbn) updateData.isbn = fields.isbn;
+      if (fields.publisher) updateData.publisher = fields.publisher;
+      if (fields.publishedYear)
+        updateData.publishedYear = parseInt(fields.publishedYear);
+      if (fields.category) updateData.category = fields.category;
+      if (fields.description) updateData.description = fields.description;
+      if (fields.totalStock)
+        updateData.totalStock = parseInt(fields.totalStock);
+      if (fields.availableStock)
+        updateData.availableStock = parseInt(fields.availableStock);
+      if (coverImageUrl) updateData.coverImage = coverImageUrl;
+
+      const book = await this.bookService.update(id, updateData);
       return reply.send(book);
     } catch (error: any) {
       return reply.status(400).send({ error: error.message });
@@ -57,7 +134,7 @@ export class BookController {
     try {
       const { id } = request.params as any;
       await this.bookService.delete(id);
-      return reply.send({ message: 'Book deleted successfully' });
+      return reply.send({ message: "Book deleted successfully" });
     } catch (error: any) {
       return reply.status(400).send({ error: error.message });
     }
@@ -69,10 +146,10 @@ export class BookController {
       const data = await request.file();
 
       if (!data) {
-        return reply.status(400).send({ error: 'No file uploaded' });
+        return reply.status(400).send({ error: "No file uploaded" });
       }
 
-      const uploadDir = path.join(process.cwd(), 'uploads', 'covers');
+      const uploadDir = path.join(process.cwd(), "uploads", "covers");
       await fs.mkdir(uploadDir, { recursive: true });
 
       const filename = `${id}-${Date.now()}${path.extname(data.filename)}`;

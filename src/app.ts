@@ -2,6 +2,8 @@ import { FastifyInstance } from 'fastify';
 import cors from '@fastify/cors';
 import multipart from '@fastify/multipart';
 import jwt from '@fastify/jwt';
+import staticFiles from '@fastify/static';
+import path from 'path';
 import { connectDB } from './config/database.js';
 import { env } from './config/env.js';
 import { authRoutes } from './routes/auth.routes.js';
@@ -19,6 +21,11 @@ export async function buildApp(fastify: FastifyInstance) {
     limits: {
       fileSize: 2 * 1024 * 1024,
     },
+  });
+
+  await fastify.register(staticFiles, {
+    root: path.join(process.cwd(), 'uploads'),
+    prefix: '/uploads/',
   });
 
   //@ts-ignore

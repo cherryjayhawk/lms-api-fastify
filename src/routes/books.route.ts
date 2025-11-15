@@ -13,13 +13,11 @@ export default async function bookRoutes(fastify: FastifyInstance) {
   });
 
   fastify.post("/", {
-    // @ts-ignore
     preHandler: [fastify.authorizeAdmin],
     handler: bookController.create.bind(bookController),
   });
 
   fastify.patch("/:id", {
-    // @ts-ignore
     preHandler: [fastify.authorizeAdmin],
     handler: bookController.update.bind(bookController),
   });
@@ -27,10 +25,5 @@ export default async function bookRoutes(fastify: FastifyInstance) {
   fastify.delete("/:id", {
     preHandler: [fastify.authorizeAdmin],
     handler: bookController.delete.bind(bookController),
-  });
-
-  fastify.post("/:id/cover", {
-    preHandler: [fastify.authorizeAdmin],
-    handler: bookController.uploadCover.bind(bookController),
   });
 }

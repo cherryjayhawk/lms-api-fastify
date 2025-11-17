@@ -9,6 +9,7 @@ import { env } from './config/env.js';
 import { authRoutes } from './routes/auth.routes.js';
 import bookRoutes from './routes/books.route.js';
 import userRoutes from './routes/users.routes.js';
+import loanRoutes from './routes/loans.routes.js';
 
 export async function buildApp(fastify: FastifyInstance) {
 
@@ -56,6 +57,7 @@ export async function buildApp(fastify: FastifyInstance) {
   await fastify.register(authRoutes, { prefix: '/api/auth' });
   await fastify.register(bookRoutes, { prefix: '/api/books' });
   await fastify.register(userRoutes, { prefix: '/api/users' });
+  await fastify.register(loanRoutes, { prefix: '/api/loans' });
 
   return fastify;
 }

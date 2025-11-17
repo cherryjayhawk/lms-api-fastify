@@ -4,6 +4,7 @@ import * as fs from "node:fs/promises";
 import { createWriteStream } from "fs";
 import path from "path";
 import { pipeline } from "stream/promises";
+import { sanitizer } from "../utils/sanitizer";
 
 export class BookController {
   private bookService: BookService;
@@ -31,32 +32,22 @@ export class BookController {
       return reply.status(404).send({ error: error.message });
     }
   }
-
   async create(request: FastifyRequest, reply: FastifyReply) {
     try {
-      const data = await request.file();
-
-      if (!data) {
-        return reply.status(400).send({ error: "No form data provided" });
-      }
-
       const fields: any = {};
-      for await (const part of request.parts()) {
-        if (part.type === "field") {
-          fields[part.fieldname] = part.value;
-        }
-      }
-
-      // Parse JSON fields and handle file
       let coverImageUrl: string | null = null;
 
       for await (const part of request.parts()) {
-        if (part.type === "file" && part.fieldname === "coverImage") {
+        if (part.type === "field") {
+          fields[part.fieldname] = part.value;
+        } else if (part.type === "file" && part.fieldname === "coverImage") {
           const uploadDir = path.join(process.cwd(), "uploads", "covers");
           await fs.mkdir(uploadDir, { recursive: true });
 
-          const filename = `${Date.now()}-${part.filename}`;
+          const safeName = sanitizer(part.filename);
+          const filename = `${Date.now()}-${safeName}`;
           const filepath = path.join(uploadDir, filename);
+
           await pipeline(part.file, createWriteStream(filepath));
 
           coverImageUrl = `/uploads/covers/${filename}`;
@@ -100,8 +91,10 @@ export class BookController {
           const uploadDir = path.join(process.cwd(), "uploads", "covers");
           await fs.mkdir(uploadDir, { recursive: true });
 
-          const filename = `${Date.now()}-${part.filename}`;
+          const safeName = sanitizer(part.filename);
+          const filename = `${Date.now()}-${safeName}`;
           const filepath = path.join(uploadDir, filename);
+
           await pipeline(part.file, createWriteStream(filepath));
 
           coverImageUrl = `/uploads/covers/${filename}`;
@@ -109,6 +102,7 @@ export class BookController {
       }
 
       const updateData: any = {};
+
       if (fields.title) updateData.title = fields.title;
       if (fields.author) updateData.author = fields.author;
       if (fields.isbn) updateData.isbn = fields.isbn;
@@ -121,10 +115,11 @@ export class BookController {
         updateData.totalStock = parseInt(fields.totalStock);
       if (fields.availableStock)
         updateData.availableStock = parseInt(fields.availableStock);
+
       if (coverImageUrl) updateData.coverImage = coverImageUrl;
 
-      const book = await this.bookService.update(id, updateData);
-      return reply.send(book);
+      const updatedBook = await this.bookService.update(id, updateData);
+      return reply.send(updatedBook);
     } catch (error: any) {
       return reply.status(400).send({ error: error.message });
     }

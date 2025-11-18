@@ -5,6 +5,8 @@ import {
   loginSchema,
   refreshTokenSchema,
   createAdminSchema,
+  getAuthenticatedUserSchema,
+  logoutSchema,
 } from "../schemas/auth.schema";
 import { env } from "../config/env";
 
@@ -39,6 +41,7 @@ export async function authRoutes(fastify: FastifyInstance) {
   fastify.post(
     "/logout",
     {
+      schema: logoutSchema,
       preHandler: async (request, reply) => {
         try {
           await request.jwtVerify();
@@ -53,6 +56,7 @@ export async function authRoutes(fastify: FastifyInstance) {
   fastify.get(
     "/me",
     {
+      schema: getAuthenticatedUserSchema,
       preHandler: async (request, reply) => {
         try {
           await request.jwtVerify();

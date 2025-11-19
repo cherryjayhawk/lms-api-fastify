@@ -29,6 +29,12 @@ interface RefreshTokenData {
 }
 
 export class AuthService {
+  /**
+   * Registers a new user in the database.
+   * @param data - Object containing the user's email, password, and name
+   * @throws {Error} - If the email is already registered
+   * @returns {Promise<Object>} - Response object containing a success message and the user's ID
+   */
   async register(data: RegisterDTO) {
     const db = getDB();
     const usersCollection = db.collection('users');
@@ -57,6 +63,12 @@ export class AuthService {
     };
   }
 
+  /**
+   * Creates an admin user in the database.
+   * @param data - Object containing the admin user's email, password, and name
+   * @throws {Error} - If the email is already registered
+   * @returns {Promise<Object>} - Response object containing a success message, the admin user's ID, and the role
+   */
   async createAdmin(data: RegisterDTO) {
     const db = getDB();
     const usersCollection = db.collection('users');
@@ -86,6 +98,13 @@ export class AuthService {
     };
   }
 
+  /**
+   * Authenticates a user with the provided email and password.
+   * @param {LoginDTO} data - Object containing the user's email and password
+   * @param {any} jwtSign - JWT sign function
+   * @throws {Error} - If the credentials are invalid
+   * @returns {Promise<Object>} - Response object containing access token, refresh token, and user information
+   */
   async login(data: LoginDTO, jwtSign: any) {
     const db = getDB();
     const usersCollection = db.collection('users');
@@ -138,6 +157,14 @@ export class AuthService {
     };
   }
 
+/**
+ * Refresh an expired access token and, if enabled, rotate the refresh token.
+ * @param {string} userId - User ID to refresh token for
+ * @param {string} refreshToken - Refresh token to verify and rotate
+ * @param {any} jwtSign - JWT sign function
+ * @throws {Error} - If the user is not found or if the token is invalid
+ * @returns {Promise<Object>} - Response object containing the new access token and, if enabled, the new rotated refresh token
+ */
   async refreshToken(userId: string, refreshToken: string, jwtSign: any) {
     const db = getDB();
     const usersCollection = db.collection('users');
@@ -225,6 +252,11 @@ export class AuthService {
     return response;
   }
 
+  /**
+   * Logout the current user and invalidate the refresh token.
+   * @param {string} userId - User ID to logout
+   * @returns {Promise<Object>} - Response object with success message
+   */
   async logout(userId: string) {
     const db = getDB();
     const usersCollection = db.collection('users');
@@ -273,6 +305,12 @@ export class AuthService {
     };
   }
 
+  /**
+   * Get the currently authenticated user's information.
+   * @param userId - User ID to retrieve info for
+   * @throws {Error} - If the user is not found
+   * @returns {Promise<Object>} - User object with password and refresh token removed
+   */
   async getCurrentUser(userId: string) {
     const db = getDB();
     const usersCollection = db.collection('users');

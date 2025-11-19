@@ -13,6 +13,13 @@ import loanRoutes from "./routes/loans.routes.js";
 import fastifySwagger from "@fastify/swagger";
 import fastifySwaggerUi from "@fastify/swagger-ui";
 
+/**
+ * Builds a Fastify application and registers all necessary plugins and routes
+ *
+ * @param fastify - The Fastify instance to build the application on.
+ *
+ * @returns The built Fastify application.
+ */
 export async function buildApp(fastify: FastifyInstance) {
   await connectDB();
 

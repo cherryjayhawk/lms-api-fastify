@@ -2,6 +2,10 @@ import Fastify from "fastify";
 import { buildApp } from "./app";
 import { env } from "./config/env";
 
+/**
+ * Starts the Fastify server
+ * @returns {Promise<void>}
+ */
 const start = async () => {
   const fastify = Fastify({
     logger: {

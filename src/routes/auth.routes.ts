@@ -27,6 +27,10 @@ export async function authRoutes(fastify: FastifyInstance) {
     "/refresh",
     {
       schema: refreshTokenSchema,
+      /**
+       * Verify the JWT token in the Authorization header.
+       * If the token is invalid, send a 401 Unauthorized response.
+       */
       preHandler: async (request, reply) => {
         try {
           await request.jwtVerify();
@@ -42,6 +46,10 @@ export async function authRoutes(fastify: FastifyInstance) {
     "/logout",
     {
       schema: logoutSchema,
+      /**
+       * Verify the JWT token in the Authorization header.
+       * If the token is invalid, send a 401 Unauthorized response.
+       */
       preHandler: async (request, reply) => {
         try {
           await request.jwtVerify();
@@ -57,6 +65,10 @@ export async function authRoutes(fastify: FastifyInstance) {
     "/me",
     {
       schema: getAuthenticatedUserSchema,
+      /**
+       * Verify the JWT token in the Authorization header.
+       * If the token is invalid, send a 401 Unauthorized response.
+       */
       preHandler: async (request, reply) => {
         try {
           await request.jwtVerify();
@@ -73,6 +85,11 @@ export async function authRoutes(fastify: FastifyInstance) {
     "/create-admin",
     {
       schema: createAdminSchema,
+      /**
+       * Pre-handler for admin creation route.
+       * Verify the admin secret key in the X-Admin-Secret header.
+       * If the secret key is invalid or missing, send a 401 Unauthorized response.
+       */
       preHandler: async (request, reply) => {
         const adminSecret = request.headers["x-admin-secret"];
         if (!adminSecret || adminSecret !== env.ADMIN_SECRET_KEY) {

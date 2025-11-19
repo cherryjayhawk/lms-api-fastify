@@ -2,6 +2,10 @@ import { getDB } from "../config/database";
 import { ObjectId } from "mongodb";
 
 export class UserService {
+  /**
+   * Get all users without password
+   * @returns {Promise<any[]>} - Array of user data without password.
+   */
   async getAll() {
     const db = getDB();
     const users = await db
@@ -11,6 +15,12 @@ export class UserService {
     return users;
   }
 
+  /**
+   * Get a user by its ID
+   * @param {string} id - The ID of the user to get.
+   * @returns {Promise<any>} - The user data without password.
+   * @throws {Error} - If the user is not found.
+   */
   async getById(id: string) {
     const db = getDB();
     const user = await db
@@ -24,6 +34,13 @@ export class UserService {
     return user;
   }
 
+  /**
+   * Update a user by its ID
+   * @param {string} id - The ID of the user to update.
+   * @param {any} data - The updated user data without password, email and role.
+   * @returns {Promise<any>} - The updated user data without password.
+   * @throws {Error} - If the user is not found.
+   */
   async update(id: string, data: any) {
     const db = getDB();
 
@@ -51,6 +68,12 @@ export class UserService {
     return result;
   }
 
+  /**
+   * Delete a user by its ID
+   * @param {string} id - The ID of the user to delete.
+   * @returns {Promise<boolean>} - True if the user is deleted successfully, false otherwise.
+   * @throws {Error} - If the user is not found.
+   */
   async delete(id: string) {
     const db = getDB();
     const result = await db

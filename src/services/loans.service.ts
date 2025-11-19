@@ -14,6 +14,16 @@ export class LoanService {
     this.bookService = new BookService();
   }
 
+  /**
+   * Retrieves all loans based on the given query and current user
+   * If the current user is not an admin, the query will be filtered by the user's ID.
+   * If a status is provided in the query, the query will be filtered by the status.
+   * The loans will be sorted by their creation date in descending order and paginated.
+   * The pagination object will contain the page, limit, total number of loans and total number of pages.
+   * @param {any} query - The query object containing the status, page and limit.
+   * @param {any} currentUser - The current user object containing the user's ID and role.
+   * @returns {Promise<Object>} - A promise resolving to an object containing the loans and pagination.
+   */
   async getAll(query: any = {}, currentUser: any) {
     const db = getDB();
     const { status, page = 1, limit = 10 } = query;
@@ -72,6 +82,14 @@ export class LoanService {
     };
   }
 
+  /**
+   * Retrieves a loan by its ID
+   * If the current user is not an admin, the loan must belong to the current user.
+   * @param {string} id - The ID of the loan to retrieve.
+   * @param {any} currentUser - The current user object containing the user's ID and role.
+   * @returns {Promise<Object>} - A promise resolving to the retrieved loan.
+   * @throws {Error} - If the loan is not found or if the current user does not have permission to view the loan.
+   */
   async getById(id: string, currentUser: any) {
     const db = getDB();
 
@@ -117,6 +135,13 @@ export class LoanService {
     return loan;
   }
 
+  /**
+   * Create a new loan.
+   * @param {LoanDTO} data - Loan data
+   * @param {any} currentUser - Current user
+   * @returns {Promise<Loan>} - Created loan
+   * @throws {Error} - If book is not available, user has active loans for this book, or user has overdue loans
+   */
   async create(data: LoanDTO, currentUser: any) {
     const db = getDB();
 
@@ -175,6 +200,14 @@ export class LoanService {
     };
   }
 
+  /**
+   * Return a book by its loan ID
+   * If the current user is not an admin, the loan must belong to the current user.
+   * @param {string} id - The ID of the loan to return.
+   * @param {any} currentUser - The current user object containing the user's ID and role.
+   * @returns {Promise<Object>} - A promise resolving to the returned loan.
+   * @throws {Error} - If the loan is not found or if the current user does not have permission to return the loan.
+   */
   async returnBook(id: string, currentUser: any) {
     const db = getDB();
 
@@ -218,6 +251,12 @@ export class LoanService {
     return result;
   }
 
+  /**
+   * Retrieves all loans belonging to a user
+   * The loans will be sorted by their creation date in descending order.
+   * @param {string} userId - The ID of the user to retrieve the loans for.
+   * @returns {Promise<Object[]>} - A promise resolving to an array of loans.
+   */
   async getUserLoans(userId: string) {
     const db = getDB();
 

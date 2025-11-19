@@ -8,6 +8,13 @@ export class AuthController {
     this.authService = new AuthService();
   }
 
+  /**
+   * Register a new user
+   * @param {FastifyRequest} request - Fastify request object.
+   * @param {FastifyReply} reply - Fastify reply object.
+   * @returns {Promise<void>} - Promise that resolves with no value.
+   * @throws {Error} - If the registration fails.
+   */
   async register(request: FastifyRequest, reply: FastifyReply) {
     try {
       const body = request.body as any;
@@ -18,6 +25,13 @@ export class AuthController {
     }
   }
 
+  /**
+   * Login an existing user
+   * @param {FastifyRequest} request - Fastify request object.
+   * @param {FastifyReply} reply - Fastify reply object.
+   * @returns {Promise<void>} - Promise that resolves with no value.
+   * @throws {Error} - If the login fails.
+   */
   async login(request: FastifyRequest, reply: FastifyReply) {
     try {
       const body = request.body as any;
@@ -28,6 +42,13 @@ export class AuthController {
     }
   }
 
+  /**
+   * Create a new admin user
+   * @param {FastifyRequest} request - Fastify request object.
+   * @param {FastifyReply} reply - Fastify reply object.
+   * @returns {Promise<void>} - Promise that resolves with no value.
+   * @throws {Error} - If the creation fails.
+   */
   async createAdmin(request: FastifyRequest, reply: FastifyReply) {
     try {
       const body = request.body as any;
@@ -38,6 +59,13 @@ export class AuthController {
     }
   }
 
+  /**
+   * Refresh an expired access token
+   * @param {FastifyRequest} request - Fastify request object.
+   * @param {FastifyReply} reply - Fastify reply object.
+   * @returns {Promise<void>} - Promise that resolves with no value.
+   * @throws {Error} - If the refresh fails.
+   */
   async refreshToken(request: FastifyRequest, reply: FastifyReply) {
     try {
       const user = (request as any).user;
@@ -53,6 +81,14 @@ export class AuthController {
     }
   }
 
+  /**
+   * Logout the current user
+   * Invalidate the refresh token and token family.
+   * @param {FastifyRequest} request - Fastify request object.
+   * @param {FastifyReply} reply - Fastify reply object.
+   * @returns {Promise<void>} - Promise that resolves with no value.
+   * @throws {Error} - If the logout fails.
+   */
   async logout(request: FastifyRequest, reply: FastifyReply) {
     try {
       const user = (request as any).user;
@@ -63,6 +99,13 @@ export class AuthController {
     }
   }
 
+  /**
+   * Get the currently authenticated user's information
+   * @param {FastifyRequest} request - Fastify request object.
+   * @param {FastifyReply} reply - Fastify reply object.
+   * @returns {Promise<void>} - Promise that resolves with no value.
+   * @throws {Error} - If the user is not found.
+   */
   async getCurrentUser(request: FastifyRequest, reply: FastifyReply) {
     try {
       const user = (request as any).user;

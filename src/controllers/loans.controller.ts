@@ -8,6 +8,13 @@ export class LoanController {
     this.loanService = new LoanService();
   }
 
+  /**
+   * Get all loans.
+   * @param {FastifyRequest} request - Fastify request object
+   * @param {FastifyReply} reply - Fastify reply object
+   * @returns {Promise<void>}
+   * @throws {Error} If an error occurs while retrieving loans
+   */
   async getAll(request: FastifyRequest, reply: FastifyReply) {
     try {
       const currentUser = (request as any).user;
@@ -20,6 +27,13 @@ export class LoanController {
     }
   }
 
+  /**
+   * Get a loan by its ID.
+   * @param {FastifyRequest} request - Fastify request object
+   * @param {FastifyReply} reply - Fastify reply object
+   * @returns {Promise<void>}
+   * @throws {Error} If an error occurs while retrieving the loan
+   */
   async getById(request: FastifyRequest, reply: FastifyReply) {
     try {
       const { id } = request.params as any;
@@ -32,6 +46,13 @@ export class LoanController {
     }
   }
 
+  /**
+   * Create a new loan.
+   * @param {FastifyRequest} request - Fastify request object
+   * @param {FastifyReply} reply - Fastify reply object
+   * @returns {Promise<void>}
+   * @throws {Error} If an error occurs while creating the loan
+   */
   async create(request: FastifyRequest, reply: FastifyReply) {
     try {
       const data = request.body as any;
@@ -44,6 +65,13 @@ export class LoanController {
     }
   }
 
+  /**
+   * Return a book by its ID.
+   * @param {FastifyRequest} request - Fastify request object
+   * @param {FastifyReply} reply - Fastify reply object
+   * @returns {Promise<void>}
+   * @throws {Error} If an error occurs while returning the book
+   */
   async returnBook(request: FastifyRequest, reply: FastifyReply) {
     try {
       const { id } = request.params as any;
@@ -56,6 +84,13 @@ export class LoanController {
     }
   }
 
+  /**
+   * Get all loans for a user.
+   * @param {FastifyRequest} request - Fastify request object
+   * @param {FastifyReply} reply - Fastify reply object
+   * @returns {Promise<void>}
+   * @throws {Error} If an error occurs while retrieving the loans
+   */
   async getUserLoans(request: FastifyRequest, reply: FastifyReply) {
     try {
       const { userId } = request.params as any;

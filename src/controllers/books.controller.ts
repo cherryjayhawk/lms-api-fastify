@@ -13,6 +13,12 @@ export class BookController {
     this.bookService = new BookService();
   }
 
+  /**
+   * Retrieves a list of books based on the query parameters
+   * @param {FastifyRequest} request - The Fastify request object.
+   * @param {FastifyReply} reply - The Fastify reply object.
+   * @returns {Promise<FastifyReply>} - A promise that resolves to a Fastify reply object.
+   */
   async getAll(request: FastifyRequest, reply: FastifyReply) {
     try {
       const query = request.query as any;
@@ -23,6 +29,13 @@ export class BookController {
     }
   }
 
+  /**
+   * Retrieves a book by its ID
+   * @param {FastifyRequest} request - The Fastify request object.
+   * @param {FastifyReply} reply - The Fastify reply object.
+   * @returns {Promise<FastifyReply>} - A promise that resolves to a Fastify reply object.
+   * @throws {Error} - If the book is not found.
+   */
   async getById(request: FastifyRequest, reply: FastifyReply) {
     try {
       const { id } = request.params as any;
@@ -32,6 +45,18 @@ export class BookController {
       return reply.status(404).send({ error: error.message });
     }
   }
+  
+  /**
+   * Creates a new book with the given data
+   * The book data can include an image which will be uploaded
+   * to the server and stored in the uploads/covers directory.
+   * The image will be sanitized and given a unique filename.
+   * The book data will be validated against the BookDTO schema.
+   * @param {FastifyRequest} request - The Fastify request object.
+   * @param {FastifyReply} reply - The Fastify reply object.
+   * @returns {Promise<FastifyReply>} - A promise that resolves to a Fastify reply object.
+   * @throws {Error} - If the book data is invalid or the image upload fails.
+   */
   async create(request: FastifyRequest, reply: FastifyReply) {
     try {
       const fields: any = {};
@@ -77,6 +102,17 @@ export class BookController {
     }
   }
 
+  /**
+   * Updates a book with the given data
+   * The book data can include an image which will be uploaded
+   * to the server and stored in the uploads/covers directory.
+   * The image will be sanitized and given a unique filename.
+   * The book data will be validated against the BookDTO schema.
+   * @param {FastifyRequest} request - The Fastify request object.
+   * @param {FastifyReply} reply - The Fastify reply object.
+   * @returns {Promise<FastifyReply>} - A promise that resolves to a Fastify reply object.
+   * @throws {Error} - If the book data is invalid or the image upload fails.
+   */
   async update(request: FastifyRequest, reply: FastifyReply) {
     try {
       const { id } = request.params as any;
@@ -125,6 +161,13 @@ export class BookController {
     }
   }
 
+  /**
+   * Deletes a book by its ID
+   * @param {FastifyRequest} request - The Fastify request object.
+   * @param {FastifyReply} reply - The Fastify reply object.
+   * @returns {Promise<FastifyReply>} - A promise that resolves to a Fastify reply object.
+   * @throws {Error} - If the book is not found.
+   */
   async delete(request: FastifyRequest, reply: FastifyReply) {
     try {
       const { id } = request.params as any;
@@ -135,6 +178,15 @@ export class BookController {
     }
   }
 
+  /**
+   * Uploads a cover image for a book
+   * The cover image will be sanitized and given a unique filename.
+   * The book data will be validated against the BookDTO schema.
+   * @param {FastifyRequest} request - The Fastify request object.
+   * @param {FastifyReply} reply - The Fastify reply object.
+   * @returns {Promise<FastifyReply>} - A promise that resolves to a Fastify reply object.
+   * @throws {Error} - If the book data is invalid or the image upload fails.
+   */
   async uploadCover(request: FastifyRequest, reply: FastifyReply) {
     try {
       const { id } = request.params as any;
